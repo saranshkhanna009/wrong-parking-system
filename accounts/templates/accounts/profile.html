@@ -1,0 +1,100 @@
+{% extends "frame.html" %}
+{% load i18n %}
+{% block profile_content %}
+{% load static %}
+<style>
+.qr-code-block {
+    /* text-align: center; */
+    display: inline-block;
+    margin: auto;
+    padding: 20px;
+}
+
+.qr-download-btn {
+    text-align: center;
+}
+</style>
+<div class="profile-content">
+{% block profile_heading %}
+    <h4 class="text-center">Profile Details</h4>
+{% endblock %}
+</div>
+{% comment %} {% include "partials/messages.html" %} {% endcomment %}
+
+    <table class="table table-borderless profile-table">
+        <tbody>
+            <tr>
+                <th>First name</th>
+                <td>{{ user.first_name}}</td>
+            </tr>
+            <tr>
+                <th>Last name</th>
+                <td>{{ user.last_name}}</td>
+            </tr>
+            <tr>
+                <th>Email address</th>
+                <td>{{ user.email }}</td>
+            </tr>
+            <tr>
+                <th>Mobile number</th>
+                <td>{{ user.mobile_number }}</td>
+            </tr>
+            <tr>
+                <th>Vehicle number</th>
+                <td>{{ user.vehicle_number }}</td>
+            </tr>
+            <tr>
+                <th>No of Visitors</th>
+                <td>{{ user.hit_count_generic.count }}</td>
+            </tr>
+            <tr>
+                <th>Date registered</th>
+                <td>{{ user.created_on }}</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <a id="update_profile" href="{% url 'accounts:profile_update' %}" class="btn btn-red">Update profile</a>
+    <button id="qr-download-btn" type="button" class="btn" class="qr-download-btn">Download QR Code</button>
+    <div class="qr-code-block" id="qr-code-block">
+    </div>
+    <br>
+    <br>
+    <br>
+
+
+{% endblock profile_content %}
+{% block custombodyend %}
+<script>
+    $(document).ready(function(){
+        $("header").removeClass("header-creative-wrap");
+        $("header").removeClass("context-dark");
+    });
+
+
+    let qrUrl = location.origin+'/qr-code/{{request.user.id}}/profile';
+    let qrcodeContainer = document.getElementById("qr-code-block");
+    qrcodeContainer.innerHTML = "";
+    new QRCode(qrcodeContainer, {
+        text: qrUrl,
+        width: 300,
+        height: 300,
+    });
+    document.body.appendChild(qrcodeContainer);
+
+
+$('#qr-download-btn').click(function(){
+    html2canvas(document.getElementById('qr-code-block'),		{
+        allowTaint: true,
+        useCORS: true
+    }).then(function (canvas) {
+        console.log(canvas);
+        console.log(canvas.toDataURL());
+        var a = document.createElement('a');
+        a.href = canvas.toDataURL();
+        a.download = 'profile_qr_code.png';
+        a.click();
+    });
+});       
+</script>
+{% endblock %}

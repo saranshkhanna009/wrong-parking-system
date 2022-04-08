@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="preloader">
+    <div class="preloader-body">
+        <div class="cssload-bell">
+            <div class="cssload-circle">
+                <div class="cssload-inner"></div>
+            </div>
+            <div class="cssload-circle">
+                <div class="cssload-inner"></div>
+            </div>
+            <div class="cssload-circle">
+                <div class="cssload-inner"></div>
+            </div>
+            <div class="cssload-circle">
+                <div class="cssload-inner"></div>
+            </div>
+            <div class="cssload-circle">
+                <div class="cssload-inner"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include "partials/messages.html" %}
+<div class="page">
+    {% include "components/header.html" %}
+
+    {% block page-content %}
+    <section class="py-5">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 profile-side-nav">
+                <div class="user-profile-image">
+                    
+                    {% if user.profile_picture.url %}
+                    <img src="{{ MEDIA_URL }}{{user.profile_picture.url}}" alt="Profile Picture">
+                    {% endif %}
+                    <p>Profile Picture</p>
+                </div>
+            </div>
+            <div class="col-lg-9 profile">
+                {% block profile_content %}
+                {% endblock profile_content %}
+            </div>
+        </div>
+    </div>
+    </section>
+    {% endblock page-content %}
+
+    {% include "components/footer.html" %}
+
+</div>
+{% endblock content %}

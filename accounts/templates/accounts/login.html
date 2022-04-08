@@ -1,0 +1,149 @@
+{% extends "frame.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block page-content %}
+{% block customheadend %}
+    <!-- Font Icon -->
+    <link rel="stylesheet" href="fonts/material-icon/css/material-design-iconic-font.min.css">
+
+    <!-- Main css -->
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+
+    #login-section {
+        /* text-align: center; */
+        margin-left: 260px;
+    }
+    </style>
+
+{% endblock %}
+
+    <div class="main">
+        <div class="container-fluid p-0">
+            <div class="signup-content">
+                <div id="login-section">
+                    <form id="form" action="{{ request.get_full_path }}" method="post" class="well register-form">
+                    <h3>LOGIN</h3>
+                    <p>If you already Registered. then you can login by your registered mobile number</p>
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}
+                        {% for err in form.non_field_errors %}
+                        <div class="form-text text-danger">
+                            {{ err }}
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                    {% for field in form.hidden_fields %}
+                        {{ field }}
+                    {% endfor %}
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <div class="form-input">
+                                {{ form.username.label_tag }}
+                                {{ form.username }}
+                                <span id="timer"></span>
+                            </div>
+                            <small class="form-text text-success" id="custom_text"></small>
+                            <small class="form-text text-danger" id="custom_error"></small>
+                            <p class="my-0 text-right">
+                                <span id="resend-otp-btn">Resend OTP</span>
+                            </p>
+                            {% if form.username.help_text %}
+                            <small class="form-text text-muted">{{ form.username.help_text|safe }}</small>
+                            {% endif %}
+                            {% if form.username.errors %}
+                            <small class="form-text text-danger">{{ form.username.errors }}</small>
+                            {% endif %}
+                        </div>
+                        <div class="form-group col-12" id="otp-block">
+                            <div class="form-input">
+                                {{ form.otp.label_tag }}
+                                {{ form.otp }}
+                            </div>
+                            {% if form.otp.help_text %}
+                            <small class="form-text text-muted">{{ form.otp.help_text|safe }}</small>
+                            {% endif %}
+                            {% if form.otp.errors %}
+                            <small class="form-text text-danger">{{ form.otp.errors }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% comment %} <p class="login-font"><a id="otp-btn" href="javascript:void(0)">{% trans "Login Via OTP" %}</a></p> {% endcomment %}
+                    {% comment %} <p class="login-font"><a href="{% url 'accounts:password-reset' %}">{% trans "I've forgotten my password" %}</a></p> {% endcomment %}
+                    <button name="login_submit" type="submit" value="Log In" class="btn btn-lg btn-primary" data-loading-text="{% trans " Logging in... " %}">{% trans 'Login' %}</button>
+                    <p class="login-font mt-2"><a href="{% url 'accounts:register' %}">{% trans "Create an account" %}</a></p>
+                </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock page-content %}
+
+ {% block custombodyend %}
+    <!-- JS -->
+    <script src="{% static 'js/register.js'%}"></script>
+    <script>
+
+    var timerBtn = document.querySelector('#timer');
+
+    var sendOtp = function(){
+        $.ajax({
+            type : "post",
+            url : "/api/v1/generate-otp.json",
+            data : {
+                "mobile_number":$('#id_username').val(),
+                "purpose": "login"
+                },
+            success : function(success) {
+                console.log(success)
+                if(success.status){
+                    startTimer(60, timerBtn);
+                    $('#custom_error').html('');
+                    $('#custom_text').html(`${success.text}`);
+                    $('#otp-block').removeClass("d-none");
+                    $('#password-block').addClass("d-none");
+                    $('#otp-btn').addClass("d-none");
+                }
+                else{
+                    $('#custom_error').html(`${success.text}`);
+                    $('#custom_text').html('');
+
+                }
+            },
+            error: function(error) {
+                console.log(error)
+                $('#custom_error').html(`${error.text}`);
+                $('#custom_text').html('')
+            },
+        });
+    }
+
+    $(document).ready(function() {
+        $('#id_username').keyup(function(){
+            if ($('#id_username').val().length == 13){
+                sendOtp();
+            }
+            else{
+                $('#custom_text').html('');
+                $('#custom_error').html('Please Enter Valid Mobile Number');
+            }
+        });
+
+        $('#resend-otp-btn').click(function(){
+            sendOtp();
+        });
+
+    });
+</script>
+<script>
+    $(document).ready(function(){
+        $("header").removeClass("header-creative-wrap");
+        $("header").removeClass("context-dark");
+    });
+</script>
+{% endblock %}
+
+

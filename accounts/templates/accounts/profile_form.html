@@ -1,0 +1,98 @@
+{% extends "accounts/profile.html" %}
+{% load i18n %}
+{% load static %}
+{% block customheadend %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha512-mSYUmp1HYZDFaVKK//63EcZq4iFWFjxSL+Z3T/aCt4IO9Cejm03q3NKKYN6pFQzY0SBOr8h+eCIAZHPXcpZaNw==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    {% endblock %}
+{% block profile_breadcrumbs %}
+    <section class="breadcrumb-list mt-100">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0">
+                    <li class="breadcrumb-item"><a href="{{homepage_url}}" class="color-primary">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'customer:summary' %}" class="color-primary">Accounts</a></li>
+                    <li class="breadcrumb-item active">Edit Profile</li>
+                </ol>
+            </nav>
+        </div>
+    </section>
+{% endblock profile_breadcrumbs %}
+
+{% block profile_content %}
+
+    <div class="profile-content">
+        {% include "partials/messages.html" %}
+        <form method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0 color-quaternary">
+                                Edit Profile</h5>
+                        </div>
+                        <div class="card-body">
+                            {% csrf_token %}
+                            {% if user_form.non_field_errors %}
+                                {% for err in user_form.non_field_errors %}
+                                    <div class="form-text text-danger">
+                                        {{ err }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                            {% for field in user_form.hidden_fields %}
+                                {{ field }}
+                            {% endfor %}
+                            <div class="form-row">
+                            {% for field in user_form.visible_fields %}
+                                <div class="form-group col-12">
+                                    {% if field.name == 'mobile_number' %}
+                                        <div class="form-input" style="display: none;">
+                                            {{ field.label_tag }}
+                                            {{ field }}
+                                        </div>
+                                        <div class="form-input">
+                                            {{ field.label_tag }}
+                                            <input type="tel" maxlength="10" id="mobile_number_2" {% if field.value %}value="{{field.value.national_number}}"{% endif %}>
+                                        </div>
+                                    {% else %}
+                                    <div class="form-input">
+                                        {{ field.label_tag }}
+                                        {{ field }}
+                                    </div>
+                                    {% endif %}
+                                    {% if field.help_text %}
+                                    <small class="form-text text-muted">{{ field.help_text|safe }}</small>
+                                    {% endif %}
+                                    {% if field.errors %}
+                                    <small class="form-text text-danger">{{ field.errors }}</small>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                            
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-lg btn-danger" type="submit">Update</button>
+                                &nbsp;or&nbsp;
+                                <a href="{% url 'accounts:profile_detail' %}">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock profile_content %}
+
+{% block custombodyend %}
+    {{block.super}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function(){
+            $('.profile-content button').addClass('btn-red');
+            $('.profile-content button').removeClass('btn-lg');
+        });
+      
+    </script>
+{% endblock %}

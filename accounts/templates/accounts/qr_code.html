@@ -1,0 +1,56 @@
+{% extends "frame.html" %}
+{% load i18n %}
+{% block page-content %}
+
+<section class="py-5" id="benefit-section">
+    <div class="container w-align">
+        <div class="title-section">
+            <h1 class="heading">Your Profile Qr-Code</h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-12 mx-auto text-center">
+                <div class="qr-code-block" id="qr-code-block"> 
+
+                </div>
+                <button id="qr-download-btn" type="button" class="qr-download-btn">Download QR Code</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock page-content %}
+{% block custombodyend %}
+<script>
+    $(document).ready(function(){
+        $("header").removeClass("header-creative-wrap");
+        $("header").removeClass("context-dark");
+    });
+
+
+    let qrUrl = location.origin+'/qr-code/{{request.user.id}}/profile';
+    let qrcodeContainer = document.getElementById("qr-code-block");
+    qrcodeContainer.innerHTML = "";
+    new QRCode(qrcodeContainer, {
+        text: qrUrl,
+        width: 300,
+        height: 300,
+    });
+    document.body.appendChild(qrcodeContainer);
+
+
+$('#qr-download-btn').click(function(){
+    html2canvas(document.getElementById('qr-code-block'),		{
+        allowTaint: true,
+        useCORS: true
+    }).then(function (canvas) {
+        console.log(canvas);
+        console.log(canvas.toDataURL());
+        var a = document.createElement('a');
+        a.href = canvas.toDataURL();
+        a.download = 'user_profile_qr.png';
+        a.click();
+    });
+});       
+
+</script>
+{% endblock %}

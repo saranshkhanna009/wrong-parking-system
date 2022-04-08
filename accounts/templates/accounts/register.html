@@ -1,0 +1,178 @@
+{% extends "frame.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block page-content %}
+{% block customheadend %}
+    <!-- Font Icon -->
+    <link rel="stylesheet" href="fonts/material-icon/css/material-design-iconic-font.min.css">
+
+    <!-- Main css -->
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .signup-form {
+            margin-left: 330px;
+        }
+    </style>
+    
+{% endblock %}
+<br><br><br>
+    <div class="main">
+        <div class="container-fluid p-0">
+            <div class="signup-content">
+                <div class="signup-form">
+                    <form id="register_form" action="{{ request.get_full_path }}" method="post" class="well register-form">
+                        <h3>REGISTER</h3>
+                        <p>If you are Not Registered. then register by filling details</p>
+                        {% csrf_token %}
+                        {% if form.non_field_errors %}
+                            {% for err in form.non_field_errors %}
+                            <div class="form-text text-danger">
+                                {{ err }}
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                        {% for field in form.hidden_fields %}
+                            {{ field }}
+                        {% endfor %}
+                        <div class="form-row">
+                            <div class="form-group m-auto">
+                                {{ form.first_name.label_tag }}
+                                {{ form.first_name }}
+                            </div>
+                            {% if form.first_name.help_text %}
+                            <small class="form-text text-muted">{{ form.first_name.help_text|safe }}</small>
+                            {% endif %}
+                            {% if form.first_name.errors %}
+                            <small class="form-text text-danger">{{ form.first_name.errors }}</small>
+                            {% endif %}
+                            <div class="form-group">
+                                <div class="form-input">
+                                    {{ form.last_name.label_tag }}
+                                    {{ form.last_name }}
+                                </div>
+                                {% if form.last_name.help_text %}
+                                <small class="form-text text-muted">{{ form.last_name.help_text|safe }}</small>
+                                {% endif %}
+                                {% if form.last_name.errors %}
+                                <small class="form-text text-danger">{{ form.last_name.errors }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-input">
+                                {{ form.vehicle_number.label_tag }}
+                                {{ form.vehicle_number }}
+                            </div>
+                            {% if form.vehicle_number.help_text %}
+                            <small class="form-text text-muted">{{ form.vehicle_number.help_text|safe }}</small>
+                            {% endif %}
+                            {% if form.vehicle_number.errors %}
+                            <small class="form-text text-danger">{{ form.vehicle_number.errors }}</small>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <div class="form-input">
+                                {{ form.mobile_number.label_tag }}
+                                {{ form.mobile_number }}
+                                <span id="timer"></span>
+                            </div>
+                            <small class="form-text text-success" id="custom_text"></small>
+                            <small class="form-text text-danger" id="custom_error"></small>
+                            <p class="my-0 text-right">
+                                <span id="resend-otp-btn">Resend OTP</span>
+                            </p>
+                            {% if form.mobile_number.help_text %}
+                            <small class="form-text text-muted">{{ form.mobile_number.help_text|safe }}</small>
+                            {% endif %}
+                            {% if form.mobile_number.errors %}
+                            <small class="form-text text-danger">{{ form.mobile_number.errors }}</small>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <div class="form-input">
+                                {{ form.otp.label_tag }}
+                                {{ form.otp }}
+                            </div>
+                            {% if form.otp.help_text %}
+                            <small class="form-text text-muted">{{ form.otp.help_text|safe }}</small>
+                            {% endif %}
+                            {% if form.otp.errors %}
+                            <small class="form-text text-danger">{{ form.otp.errors }}</small>
+                            {% endif %}
+                        </div>
+                  
+                    <button name="registration_submit" type="submit" value="Register" class="btn btn-lg btn-primary" data-loading-text=" Registering... ">Register</button>
+                    <p class="login-font mt-2"><a href="{% url 'accounts:login' %}">If already has an account</a></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock page-content %}
+
+ {% block custombodyend %}
+    <!-- JS -->
+    <script src="{% static 'js/register.js'%}"></script>
+    <script>
+
+    var timerBtn = document.querySelector('#timer');
+
+    var sendOtp = function(){
+        $.ajax({
+            type : "post",
+            url : "/api/v1/generate-otp.json",
+            data : {
+                "mobile_number":$('#id_mobile_number').val(),
+                "purpose": "signup"
+                },
+            success : function(success) {
+                console.log(success)
+                if(success.status){
+                    startTimer(60, timerBtn);
+                    $('#custom_error').html('');
+                    $('#custom_text').html(`${success.text}`);
+                    $('#otp-block').removeClass("d-none");
+                    $('#password-block').addClass("d-none");
+                    $('#otp-btn').addClass("d-none");
+                }
+                else{
+                    $('#custom_error').html(`${success.text}`);
+                    $('#custom_text').html('');
+
+                }
+            },
+            error: function(error) {
+                console.log(error)
+                $('#custom_error').html(`${error.text}`);
+                $('#custom_text').html('')
+            },
+        });
+    }
+
+    $(document).ready(function() {
+        $('#id_mobile_number').change(function(){
+            if ($(this).val().length == 13){
+                sendOtp();
+            }
+            else{
+                $('#custom_text').html('');
+                $('#custom_error').html('Please Enter Valid Mobile Number');
+            }
+        });
+        $('#resend-otp-btn').click(function(){
+            sendOtp();
+        });
+    });
+</script>
+<script>
+    $(document).ready(function(){
+        $("header").removeClass("header-creative-wrap");
+        $("header").removeClass("context-dark");
+    });
+</script>
+{% endblock %}
+
+
