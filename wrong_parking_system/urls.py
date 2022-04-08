@@ -23,6 +23,7 @@ urlpatterns = [
 
     path('', include('accounts.urls')),
     path('admin/', admin.site.urls),
+    path('hitcount/', include(('hitcount.urls', 'hitcount'), namespace='hitcount')),
 
 ]
 

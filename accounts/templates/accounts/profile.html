@@ -2,6 +2,8 @@
 {% load i18n %}
 {% block profile_content %}
 {% load static %}
+{% load hitcount_tags %}
+
 <style>
 .qr-code-block {
     /* text-align: center; */
@@ -44,8 +46,10 @@
                 <td>{{ user.vehicle_number }}</td>
             </tr>
             <tr>
-                <th>No of Visitors</th>
-                <td>{{ user.hit_count_generic.count }}</td>
+                <th>Visitors</th>
+                <td>
+                    {% get_hit_count for user %}
+               </td>
             </tr>
             <tr>
                 <th>Date registered</th>

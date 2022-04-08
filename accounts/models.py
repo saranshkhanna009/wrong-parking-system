@@ -79,8 +79,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         null=True,
     )
 
-    hit_count_generic = GenericRelation(HitCount, object_id_field='object_pk',
-     related_query_name='hit_count_generic_relation')
+    hit_count_generic = GenericRelation(
+        HitCount, object_id_field='object_pk',
+        related_query_name='hit_count_generic_relation'
+    )
 
     is_staff = models.BooleanField(
         default=False
@@ -161,7 +163,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         if self.is_superuser:
             return None  
 
-
+    def current_hit_count(self):
+        return self.hit_count.hits
+        
 class UserOTP(models.Model):
     """
     Handles Users OTPs

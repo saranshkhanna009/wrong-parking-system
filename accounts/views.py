@@ -42,7 +42,6 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.shortcuts import resolve_url
 from django.http import HttpResponseRedirect
 from hitcount.views import HitCountDetailView
-from django.views.generic.edit import DeleteView
 
 User = get_user_model()
 
@@ -86,7 +85,10 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
     Profile detail view
     """
 
+    model = User
     template_name = 'accounts/profile.html'
+    raise_exception = True 
+    
     
     def get_template_names(self):
         return super(self.__class__, self).get_template_names()
@@ -140,7 +142,7 @@ class QrCodeProfileView(HitCountDetailView):
     template_name = 'accounts/qr_code_profile.html'
     raise_exception = True 
     count_hit = True
-    
+
     def get_context_data(self, **kwargs):
         context = super(QrCodeProfileView, self).get_context_data(**kwargs)
         context.update({
