@@ -169,4 +169,7 @@ if ENVIRONMENT == 'PRODUCTION':
 elif ENVIRONMENT == 'STAGING':
     from ._settings.staging import *
 else:
-    from ._settings.local import *
+    try:
+        from ._settings.local import *
+    except ImportError:
+        pass

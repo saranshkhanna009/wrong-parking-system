@@ -2,7 +2,7 @@
 import datetime
 from email.policy import default
 # Django Imports
-from django.contrib.gis.db import models
+from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
     PermissionsMixin,
