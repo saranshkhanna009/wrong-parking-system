@@ -61,5 +61,5 @@ class GenerateOtpAPIView(GenericAPIView):
                 otp.send_otp(UserOTP.LOGIN_VERIFICATION)
             else:
                 return Response({'status': False, 'text': 'There is no account with this mobile number'}, status=status.HTTP_200_OK)
-        return Response({'status': True, 'text': 'OTP Sent to your mobile number'}, status=status.HTTP_200_OK)
+        return Response({'status': True, 'text': 'OTP Sent to your mobile number {{otp}}'}, status=status.HTTP_200_OK)
 
