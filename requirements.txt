@@ -1,7 +1,7 @@
 asgiref==3.5.0
 asttokens==2.0.5
 backcall==0.2.0
-backports.zoneinfo==0.2.1
+#backports.zoneinfo==0.2.1
 certifi==2021.10.8
 charset-normalizer==2.0.12
 decorator==5.1.1
@@ -21,9 +21,9 @@ parso==0.8.3
 pexpect==4.8.0
 phonenumbers==8.12.46
 pickleshare==0.7.5
-Pillow==9.1.0
+Pillow
 prompt-toolkit==3.0.29
-psycopg2-binary==2.9.3
+psycopg2-binary
 ptyprocess==0.7.0
 pure-eval==0.2.2
 Pygments==2.11.2
